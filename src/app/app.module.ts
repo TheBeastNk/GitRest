@@ -1,11 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+
 
 
 import { AppComponent } from './app.component';
-import { GithubRestApiService } from 'src/github-rest-api.service';
 
 @NgModule({
   declarations: [
@@ -15,7 +14,7 @@ import { GithubRestApiService } from 'src/github-rest-api.service';
     BrowserModule,
     HttpClientModule
   ],
-  providers: [GithubRestApiService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { GithubRestApiService } from 'src/github-rest-api.service';
 
 
 @Component({
@@ -8,5 +7,5 @@ import { GithubRestApiService } from 'src/github-rest-api.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  
+
 }
