@@ -1,19 +1,84 @@
-<!--Nav Bar-->
-<div class="container navBar">
-    <div class="row">
-      <div class="col-xs-6">
-        <select class="dropDown" [(ngModel)]="selectedSort" (click)="SortingResult()">
-          <option value="NameAlphabeticallyAZ">Sort By Name (A-Z)</option>
-          <option value="NameReverseAlphabeticallyZA">Sort By Name (Z-A)</option>
-          <option value="RankUp">Sort By Rank Up</option>
-          <option value="RankDown">Sort By Rank Down</option>
-        </select>
-      </div>
-      <div class="col-xs-6">
-        <input type="text" id="inputName" [(ngModel)]="inputName" placeholder="Search by Names like Shantanu.." />
-        <button class="searchButton" (click)="searchByName()">
-          <i class="glyphicon glyphicon-search"></i>
-        </button>
+<!--The content below is only a placeholder and can be replaced.-->
+<nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark" style="background-color: #4867aa !important">
+    <a class="navbar-brand" href="#">Github App</a>
+    <button class="navbar-toggler p-0 border-0" type="button" data-toggle="offcanvas">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
+      
+      <div class="form-inline my-2 my-lg-0">
+        <span style="color:white">Sort By&nbsp;:&nbsp;</span> 
+        <select [disabled]="searchKeyword.trim().length==0" class="form-control mr-sm-2" #sorting (change)="onSortChange(sorting.value)">
+        <option value="followasc">Followers Asc</option>
+        <option value="followdesc">Followers Desc</option>
+        <option value="joinedasc">Joined Asc</option>
+        <option value="joineddesc" selected="selected">Joined Desc</option>
+      </select>
+        <input class="form-control mr-sm-2" type="text" [(ngModel)]="searchKeyword" placeholder="Search" aria-label="Search" #searchUser (keyup.enter)="getUsersList()">
+        <button [disabled]="searchKeyword.trim().length==0" class="btn btn-outline-success my-2 my-sm-0" type="submit" style="background-color: white !important;color: black !important" (click)="getUsersList()">Search</button>
       </div>
     </div>
+</nav>
+  <br/><br/><br/><br/>
+
+  
+<div *ngIf="usersList && usersList.total_count > 0">
+  <b>Total : {{ (usersList && usersList.total_count > 1000) ? 1000 : usersList.total_count}}</b>
+  <br/>
+  <div class="card w-75" [class.border-primary]="users.id == selectedUser" *ngFor="let users of usersList.items | paginate: { id: 'server', itemsPerPage: 10, currentPage: p, totalItems: usersList.total_count };let idx = index">
+  <div class="card-body">
+  <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+  <img src="{{users.avatar_url}}" alt="Avatar" class="avatar" >
+  Username : {{users.login}} <br/>
+  Profile Url : <a target="_blank" href="{{users.html_url}}">{{users.html_url}}</a>
+  </div>
+  <div class="moreinfo" *ngIf="users.id == selectedUser">
+  <div *ngIf="usersMoreInfo">
+   <p>
+   Name : {{usersMoreInfo.name}}<br/>
+   Location : {{usersMoreInfo.location ? usersMoreInfo.location : 'NA'}}<br/>
+   Followers : {{usersMoreInfo.followers ? usersMoreInfo.followers : 'NA'}}<br/>
+   Joined: {{usersMoreInfo.created_at | date:'fullDate'}}
+ </p>
+ <table class="table" *ngIf="usersRepo && usersRepo.length > 0">
+  <tr><th>Repo name</th><th>Language</th></tr>
+ <tr *ngFor="let repo of usersRepo">
+  <td>{{repo.name ? repo.name : 'NA'}}</td>
+  <td>{{repo.language ? repo.language : 'NA'}}</td></tr>
+ </table>
+ <div *ngIf="usersRepo && usersRepo.length == 0">
+    Sorry.Repo not available
+  </div>
+  </div>
+  <div *ngIf="!usersMoreInfo">
+    loading...
+  </div>
+  </div>
+  <small class="d-block text-right mt-3">
+        <a *ngIf="collapse && users.id != selectedUser" class="btn btn-primary" style="cursor: pointer;" (click)="getMoreInfo(users);getRepoInfo(users)">Details</a>
+        <a *ngIf="!collapse" class="btn btn-primary" style="cursor: pointer;" (click)="getMoreInfo(users);getRepoInfo(users)">Details</a>
+        <a *ngIf="collapse && users.id == selectedUser" class="btn btn-primary" style="cursor: pointer;" (click)="collapseThis()">Collapse</a>
+      </small>
+  </div>
+  </div>
+  <br/>
 </div>
+<div *ngIf="!usersList && !loading" style="text-align: center;">
+  <b>Please search by name</b>
+</div>
+<div class="preload" *ngIf="loading">Please wait...</div>
+<!-- <div *ngIf="!usersList">{{status}}</div> -->
+      <!-- <div class="media text-muted pt-3">
+        <img data-src="holder.js/32x32?theme=thumb&bg=6f42c1&fg=6f42c1&size=1" alt="" class="mr-2 rounded">
+        <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+           <img src="favicon.ico" alt="Avatar" class="avatar">
+          Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+        </p>
+      </div> -->
+      <small class="d-block text-right mt-3" *ngIf="usersList">
+        <pagination-controls (pageChange)="setPage(p=$event)" id="server"></pagination-controls>
+      </small>
+ 
+
+
